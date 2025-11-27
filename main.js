@@ -95,8 +95,23 @@ const app = {
     })
     $(".playlist").innerHTML = htmls.join("");
   },
-  start: function () {
-    this.render();
+
+  handleEvents: function() {
+    const cd = $('.cd')
+    const cdWidth = cd.offsetWidth
+    
+    document.onscroll = function() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      const newCdWidth = cdWidth -scrollTop
+
+      cd.style.width = newCdWidth + 'px'
+    } 
   },
-};
+
+  start: function () {
+    this.handleEvents()
+
+    this.render()
+  },
+}
 app.start()
