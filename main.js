@@ -18,10 +18,12 @@ const heading = $('header h2')
 const cdThumb = $('.cd-thumb')
 const audio = $('#audio')
 const cd = $('.cd')
+const playbtn = $('.btn-toggle-play')
+const player = $('.player')
 
 const app = {
   currentIndex: 0,
-
+  isPLaying: false,
   songs: [
     {
       name: "Control",
@@ -105,14 +107,38 @@ const app = {
 
   handleEvents: function() {
     const cdWidth = cd.offsetWidth
+    const _this = this
     
-    document.onscroll = function() {
+    //xử lý phóng to thu nhỏ cd
+    document.onscroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop
       const newCdWidth = cdWidth - scrollTop
 
       cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
       cd.style.opacity = newCdWidth / cdWidth
     } 
+
+    //xử lý play song
+    playbtn.onclick = () => {
+      if (_this.isPLaying) {
+        audio.pause()
+      }
+      else {
+        audio.play()
+      }
+    }
+
+    //khi song đc play
+    audio.onplay = () => {
+      _this.isPLaying = true
+      player.classList.add('playing')
+    }
+
+    // khi song đc tắt
+    audio.onpause = () => {
+      _this.isPLaying = false
+      player.classList.remove('playing')
+    }
   },
 
   defineProperties: function() {
