@@ -20,6 +20,7 @@ const audio = $('#audio')
 const cd = $('.cd')
 const playbtn = $('.btn-toggle-play')
 const player = $('.player')
+const progress = $('#progress')
 
 const app = {
   currentIndex: 0,
@@ -109,6 +110,10 @@ const app = {
     const cdWidth = cd.offsetWidth
     const _this = this
     
+    //====================================================
+    //=====================scroll-cd======================
+    //====================================================
+
     //xử lý phóng to thu nhỏ cd
     document.onscroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop
@@ -117,6 +122,10 @@ const app = {
       cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
       cd.style.opacity = newCdWidth / cdWidth
     } 
+
+    //====================================================
+    //=====================play-pause=====================
+    //====================================================
 
     //xử lý play song
     playbtn.onclick = () => {
@@ -138,6 +147,35 @@ const app = {
     audio.onpause = () => {
       _this.isPLaying = false
       player.classList.remove('playing')
+    }
+
+    //====================================================
+    //===================progress bar=====================
+    //====================================================
+
+    let isSeeking = false;
+
+    //khi bắt đầu sờ vào thanh trượt(progress)
+    progress.onmousedown = () => {
+      isSeeking = true
+    }
+    progress.ontouchstart = () => {
+      isSeeking = true
+    }
+
+    //khi tiến độ bài hát thay đổi
+    audio.ontimeupdate = () => {
+      if (audio.duration && !isSeeking) {
+        const progressPercent = (Math.floor(audio.currentTime / audio.duration * 100))
+        progress.value = progressPercent
+      }
+    }
+
+    //xử lý khi tua song
+    progress.onchange = (e) => {
+      const seek = e.target.value / 100 * audio.duration
+      audio.currentTime = seek
+      isSeeking = false
     }
   },
 
