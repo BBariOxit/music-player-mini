@@ -14,7 +14,14 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+const heading = $('header h2')
+const cdThumb = $('.cd-thumb')
+const audio = $('#audio')
+const cd = $('.cd')
+
 const app = {
+  currentIndex: 0,
+
   songs: [
     {
       name: "Control",
@@ -97,7 +104,6 @@ const app = {
   },
 
   handleEvents: function() {
-    const cd = $('.cd')
     const cdWidth = cd.offsetWidth
     
     document.onscroll = function() {
@@ -109,9 +115,32 @@ const app = {
     } 
   },
 
-  start: function () {
+  defineProperties: function() {
+    Object.defineProperty(this, 'currentSong', {       //Object.defineProperty(obj, prop, descriptor)
+      get: function() {
+        return this.songs[this.currentIndex]
+      }
+    })
+  },
+
+  loadCurrentSong: function() {
+
+    heading.textContent = this.currentSong.name
+    cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
+    audio.src = this.currentSong.path
+  },
+
+  start: function() {
+    //định nghĩa các thuộc tính của obj
+    this.defineProperties()
+
+    //lắng nghe xử lý các sự kiện (DOM event )
     this.handleEvents()
 
+    //tải thông tin bài hát đầu tiên khi chạy
+    this.loadCurrentSong()
+
+    //render playlist
     this.render()
   },
 }
