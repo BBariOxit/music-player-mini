@@ -3,8 +3,8 @@
  * 2. Scroll top => ok
  * 3. Play / pause / seek => ok
  * 4. CD rotate => ok
- * 5. Next / prev 
- * 6. Random
+ * 5. Next / prev => ok
+ * 6. Random 
  * 7. Next / Repeat when ended
  * 8. Active song
  * 9. Scroll active song into view
@@ -23,10 +23,12 @@ const player = $('.player')
 const progress = $('#progress')
 const nextBtn = $('.btn-next')
 const preBtn = $('.btn-prev')
+const randomBtn = $('.btn-random')
 
 const app = {
   currentIndex: 0,
   isPLaying: false,
+  isRandom: false,
   songs: [
     {
       name: "Infinite",
@@ -201,14 +203,45 @@ const app = {
 
     //xử lý khi nhấn nút next
     nextBtn.onclick = () => {
-      _this.nextSong()
+      if(_this.isRandom) {
+        _this.randomSong()
+      }else {
+        _this.nextSong()
+      }
       audio.play()
     }
 
     //khi ấn nút pre
     preBtn.onclick = () => {
-      _this.preSong()
+      if(_this.isRandom) {
+        _this.randomSong()
+      }else {
+        _this.preSong()
+      }
       audio.play()
+    }
+
+    //====================================================
+    //===================random song======================
+    //====================================================
+
+    //khi ấn nút random
+    //CACH1
+    // randomBtn.onclick = () => {
+    //   if(_this.isRandom) {
+    //     randomBtn.classList.remove('active')
+    //     _this.isRandom = false
+    //   }
+    //   else {
+    //     _this.isRandom = true
+    //     randomBtn.classList.add('active')
+    //   }
+    // }
+
+    //CACH 2
+    randomBtn.onclick = () => {
+      _this.isRandom = !_this.isRandom
+      randomBtn.classList.toggle('active', _this.isRandom)
     }
   },
 
@@ -240,6 +273,16 @@ const app = {
     if (this.currentIndex < 0) {
       this.currentIndex = this.songs.length - 1
     }
+    this.loadCurrentSong()
+  },
+
+  randomSong: function() {
+    let newIndex
+    do {
+      newIndex = Math.floor(Math.random() * this.songs.length)
+    } while (newIndex === this.currentIndex)
+    
+    this.currentIndex = newIndex
     this.loadCurrentSong()
   },
 
