@@ -24,11 +24,13 @@ const progress = $('#progress')
 const nextBtn = $('.btn-next')
 const preBtn = $('.btn-prev')
 const randomBtn = $('.btn-random')
+const repeatBtn = $('.btn-repeat')
 
 const app = {
   currentIndex: 0,
   isPLaying: false,
   isRandom: false,
+  isRepeat: false,
   songs: [
     {
       name: "Infinite",
@@ -242,6 +244,25 @@ const app = {
     randomBtn.onclick = () => {
       _this.isRandom = !_this.isRandom
       randomBtn.classList.toggle('active', _this.isRandom)
+    }
+
+    //====================================================
+    //================next-repeat at end==================
+    //====================================================
+
+    //xử lý khi end song
+    audio.onended = () => {
+      if(_this.isRepeat) {
+        audio.play()
+      } else {
+        nextBtn.click()
+      }
+    }
+
+    //xử lý nút repeat
+    repeatBtn.onclick = () => {
+      _this.isRepeat = !_this.isRepeat
+      repeatBtn.classList.toggle('active', _this.isRepeat)
     }
   },
 
