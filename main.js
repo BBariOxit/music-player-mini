@@ -1,8 +1,8 @@
 /*
- * 1. Render songs
- * 2. Scroll top
- * 3. Play / pause / seek
- * 4. CD rotate
+ * 1. Render songs => ok
+ * 2. Scroll top => ok
+ * 3. Play / pause / seek = > ok
+ * 4. CD rotate 
  * 5. Next / prev
  * 6. Random
  * 7. Next / Repeat when ended
@@ -141,12 +141,14 @@ const app = {
     audio.onplay = () => {
       _this.isPLaying = true
       player.classList.add('playing')
+      cdThumbAnimate.play() //cho cd rotate
     }
 
     // khi song đc tắt
     audio.onpause = () => {
       _this.isPLaying = false
       player.classList.remove('playing')
+      cdThumbAnimate.pause() //dung cd rotate
     }
 
     //====================================================
@@ -177,6 +179,19 @@ const app = {
       audio.currentTime = seek
       isSeeking = false
     }
+
+    //====================================================
+    //===================progress bar=====================
+    //====================================================
+
+    //xử lý cd quay và dừng
+    const cdThumbAnimate = cdThumb.animate([
+      {transform: 'rotate(360deg)'}
+    ],{
+      duration: 10000,
+      iterations: Infinity
+    })
+    cdThumbAnimate.pause()
   },
 
   defineProperties: function() {
