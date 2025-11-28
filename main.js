@@ -1,9 +1,9 @@
 /*
  * 1. Render songs => ok
  * 2. Scroll top => ok
- * 3. Play / pause / seek = > ok
- * 4. CD rotate 
- * 5. Next / prev
+ * 3. Play / pause / seek => ok
+ * 4. CD rotate => ok
+ * 5. Next / prev 
  * 6. Random
  * 7. Next / Repeat when ended
  * 8. Active song
@@ -18,14 +18,22 @@ const heading = $('header h2')
 const cdThumb = $('.cd-thumb')
 const audio = $('#audio')
 const cd = $('.cd')
-const playbtn = $('.btn-toggle-play')
+const playBtn = $('.btn-toggle-play')
 const player = $('.player')
 const progress = $('#progress')
+const nextBtn = $('.btn-next')
+const preBtn = $('.btn-prev')
 
 const app = {
   currentIndex: 0,
   isPLaying: false,
   songs: [
+    {
+      name: "Infinite",
+      singer: "Valence",
+      path: "./assets/music/Infinite.mp3",
+      image: "./assets/img/Infinite.jpg",
+    },
     {
       name: "Control",
       singer: "Unknown Brain, Rival, Jex",
@@ -47,7 +55,7 @@ const app = {
     {
       name: "Firefly",
       singer: "Jim Yosef",
-      path: "./assets/music/Firely.mp3",
+      path: "./assets/music/Firefly.mp3",
       image: "./assets/img/Firefly.jpg",
     },
     {
@@ -55,12 +63,6 @@ const app = {
       singer: "NIVIRO",
       path: "./assets/music/Flares.mp3",
       image: "./assets/img/Flares.jpg",
-    },
-    {
-      name: "Infinite",
-      singer: "Valence",
-      path: "./assets/music/Infinite.mp3",
-      image: "./assets/img/Infinite.jpg",
     },
     {
       name: "Let's Go!",
@@ -128,7 +130,7 @@ const app = {
     //====================================================
 
     //xử lý play song
-    playbtn.onclick = () => {
+    playBtn.onclick = () => {
       if (_this.isPLaying) {
         audio.pause()
       }
@@ -192,6 +194,22 @@ const app = {
       iterations: Infinity
     })
     cdThumbAnimate.pause()
+
+    //====================================================
+    //===================next, pre song===================
+    //====================================================
+
+    //xử lý khi nhấn nút next
+    nextBtn.onclick = () => {
+      _this.nextSong()
+      audio.play()
+    }
+
+    //khi ấn nút pre
+    preBtn.onclick = () => {
+      _this.preSong()
+      audio.play()
+    }
   },
 
   defineProperties: function() {
@@ -207,6 +225,22 @@ const app = {
     heading.textContent = this.currentSong.name
     cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
     audio.src = this.currentSong.path
+  },
+
+  nextSong: function() {
+    this.currentIndex++
+    if (this.currentIndex >= this.songs.length) {
+      this.currentIndex = 0
+    }
+    this.loadCurrentSong()
+  },
+
+  preSong: function() {
+    this.currentIndex--
+    if (this.currentIndex < 0) {
+      this.currentIndex = this.songs.length - 1
+    }
+    this.loadCurrentSong()
   },
 
   start: function() {
