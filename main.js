@@ -14,6 +14,7 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+const PLAYER_STORAGE_KEY = 'phanbao'
 const heading = $('header h2')
 const cdThumb = $('.cd-thumb')
 const audio = $('#audio')
@@ -25,12 +26,14 @@ const nextBtn = $('.btn-next')
 const preBtn = $('.btn-prev')
 const randomBtn = $('.btn-random')
 const repeatBtn = $('.btn-repeat')
+const playlist = $('.playlist')
 
 const app = {
   currentIndex: 0,
   isPLaying: false,
   isRandom: false,
   isRepeat: false,
+  config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
   songs: [
     {
       name: "Infinite",
@@ -93,10 +96,14 @@ const app = {
       image: "./assets/img/Where We Started.jpg",
     },
   ],
+  setConfig: function (key,value) {
+    this.config[key] = value
+    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config))
+  },
   render: function () {
     const htmls = this.songs.map((song, index) => {
       return `
-            <div class="song ${index === this.currentIndex ? 'active' : ''}">
+            <div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="${index}">
                 <div class="thumb"
                     style="background-image: url('${song.image}')"></div>
                 <div class="body">
@@ -109,7 +116,7 @@ const app = {
             </div>
         `
     })
-    $(".playlist").innerHTML = htmls.join("");
+    playlist.innerHTML = htmls.join("");
   },
 
   handleEvents: function() {
@@ -233,6 +240,7 @@ const app = {
     //CACH 2
     randomBtn.onclick = () => {
       _this.isRandom = !_this.isRandom
+      _this.setConfig('isRandom', _this.isRandom)
       randomBtn.classList.toggle('active', _this.isRandom)
     }
 
@@ -252,7 +260,27 @@ const app = {
     //xử lý nút repeat
     repeatBtn.onclick = () => {
       _this.isRepeat = !_this.isRepeat
+      _this.setConfig('isRepeat', _this.isRepeat)
       repeatBtn.classList.toggle('active', _this.isRepeat)
+    }
+
+    //handle-song-selection
+    playlist.onclick = (e) => {
+      const songNode = e.target.closest('.song:not(.active)')
+      if (songNode || e.target.closest('.option')){
+        //xử lý khi click vào xong
+          if (songNode){
+            _this.currentIndex = Number(songNode.dataset.index)
+            _this.loadCurrentSong()
+            _this.render()
+            audio.play()
+          }
+
+          //xử lý khi nhấn vào nút option
+          if(e.target.closest('.option')){
+
+          }
+      }
     }
   },
 
@@ -277,6 +305,16 @@ const app = {
     heading.textContent = this.currentSong.name
     cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
     audio.src = this.currentSong.path
+  },
+
+  loadConfig: function() {
+    this.isRandom = this.config.isRandom
+    this.isRepeat = this.config.isRepeat
+  },
+
+  displayActivebtn: function() {
+    repeatBtn.classList.toggle('active', this.isRepeat)
+    randomBtn.classList.toggle('active', this.isRandom)
   },
 
   nextSong: function() {
@@ -306,6 +344,9 @@ const app = {
   },
 
   start: function() {
+    //gán cấu hình config
+    this.loadConfig()
+    this.displayActivebtn()
     //định nghĩa các thuộc tính của obj
     this.defineProperties()
 
