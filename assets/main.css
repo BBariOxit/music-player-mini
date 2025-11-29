@@ -22,6 +22,10 @@ html {
   position: relative;
   max-width: 480px;
   margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .player .icon-pause {
@@ -40,8 +44,8 @@ html {
   padding: 16px 16px 14px;
   margin-top: 30px;
   background-color: #fff;
-  position: fixed;
-  top: 0;
+  position: relative;
+  top: auto;
   width: 100%;
   max-width: 480px;
   border-bottom: 1px solid #ebebeb;
@@ -132,8 +136,10 @@ header h2 {
 
 /* PLAYLIST */
 .playlist {
-  margin-top: 408px;
   padding: 12px;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .song {
