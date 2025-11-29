@@ -94,9 +94,9 @@ const app = {
     },
   ],
   render: function () {
-    const htmls = this.songs.map((song) => {
+    const htmls = this.songs.map((song, index) => {
       return `
-            <div class="song">
+            <div class="song ${index === this.currentIndex ? 'active' : ''}">
                 <div class="thumb"
                     style="background-image: url('${song.image}')"></div>
                 <div class="body">
@@ -113,21 +113,7 @@ const app = {
   },
 
   handleEvents: function() {
-    const cdWidth = cd.offsetWidth
     const _this = this
-    
-    //====================================================
-    //=====================scroll-cd======================
-    //====================================================
-
-    //xử lý phóng to thu nhỏ cd
-    document.onscroll = () => {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop
-      const newCdWidth = cdWidth - scrollTop
-
-      cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
-      cd.style.opacity = newCdWidth / cdWidth
-    } 
 
     //====================================================
     //=====================play-pause=====================
@@ -211,6 +197,8 @@ const app = {
         _this.nextSong()
       }
       audio.play()
+      _this.render()
+      _this.scrollToActiveSong()
     }
 
     //khi ấn nút pre
@@ -221,6 +209,8 @@ const app = {
         _this.preSong()
       }
       audio.play()
+      _this.render()
+      _this.scrollToActiveSong()
     }
 
     //====================================================
@@ -274,8 +264,16 @@ const app = {
     })
   },
 
-  loadCurrentSong: function() {
+  scrollToActiveSong: function() {
+    setTimeout(() => {
+      $('.song.active').scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+      })
+    }, 300)
+  },
 
+  loadCurrentSong: function() {
     heading.textContent = this.currentSong.name
     cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
     audio.src = this.currentSong.path
@@ -314,11 +312,11 @@ const app = {
     //lắng nghe xử lý các sự kiện (DOM event )
     this.handleEvents()
 
+    //render playlist trước để có DOM .song
+    this.render()
+
     //tải thông tin bài hát đầu tiên khi chạy
     this.loadCurrentSong()
-
-    //render playlist
-    this.render()
   },
 }
 app.start()
